@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1024">
+<title>200lvl Linguistics Football Team</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;800&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+
+<style>
+  /* ---------- Variables & Reset ---------- */
+  :root{
+    --accent:#f2b705;
+    --dark:#111214;
+    --muted:#9a9aa0;
+    --card:#1f1f24;
+    --glass: rgba(255,255,255,0.03);
+    --maxw:1200px;
+    --trans:.28s;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;background:#0f0f12;color:#fff;font-family:Montserrat,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial }
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
+
+  /* ---------- Top navigation ---------- */
+  .topbar{
+    position:fixed;left:0;right:0;top:0;z-index:40;
+    backdrop-filter: blur(4px);
+    border-bottom:1px solid rgba(255,255,255,0.03);
+    background: linear-gradient(180deg, rgba(10,10,12,0.65), rgba(10,10,12,0.35));
+  }
+  .topbar-inner{
+    max-width:var(--maxw);margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;
+  }
+  .left, .right {display:flex;align-items:center;gap:12px}
+  .menu{display:flex;gap:18px;align-items:center;font-weight:600;letter-spacing:.6px}
+  .menu a{font-size:13px;color:#eae9eb;opacity:.95}
+  .logo-wrap{position:absolute;left:50%;top:8px;transform:translateX(-50%);pointer-events:none}
+  .logo-wrap img{height:56px}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    min-height:100vh;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;
+    background: #0b0b0c;
+  }
+  .hero-bg{
+    position:absolute;inset:0;background-image:linear-gradient(180deg, rgba(2,2,4,0.55), rgba(2,2,4,0.7)), url('assets/hero-bg-polygon.jpg');
+    background-size:cover;background-position:center;filter:contrast(.95) brightness(.7);
+    transform: translateZ(0); z-index:0;
+  }
+
+  .hero-inner{
+    position:relative;z-index:6;max-width:var(--maxw);width:calc(100% - 40px);text-align:center;padding:40px 0;
+  }
+  .headline{font-family:Oswald, sans-serif;font-weight:800;line-height:0.9;letter-spacing:2px}
+  .headline .line1{font-size:96px;color:var(--accent);margin:0}
+  .headline .line2{font-size:96px;color:#fff;margin:0;margin-top:6px}
+  .hero-sub{margin-top:10px;color:var(--muted);font-weight:600}
+
+  /* player figure */
+  .player-figure{
+    position:absolute;left:50%;transform:translateX(-50%);bottom:120px;z-index:5;pointer-events:none;
+    width:44%;max-width:650px;
+  }
+  .player-figure img{display:block;width:100%;height:auto;filter:drop-shadow(0 40px 50px rgba(0,0,0,.6))}
+
+  /* CTA */
+  .hero-ctas{position:absolute;right:48px;bottom:48px;z-index:7;display:flex;gap:12px}
+  .btn{
+    border-radius:8px;padding:12px 18px;font-weight:800;text-transform:uppercase;border:2px solid rgba(255,255,255,0.08);
+    background:transparent;color:var(--accent);cursor:pointer;transition:all var(--trans);
+  }
+  .btn.primary{background:var(--accent);color:#111;border-color:var(--accent)}
+  .btn:hover{transform:translateY(-4px)}
+
+  /* side prev/next */
+  .side-nav{position:absolute;top:50%;left:0;right:0;pointer-events:none;z-index:8}
+  .side-nav .prev,.side-nav .next{
+    position:absolute;pointer-events:auto;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);
+    writing-mode:vertical-rl;transform:rotate(180deg);font-size:14px;
+  }
+  .side-nav .prev{left:8px}
+  .side-nav .next{right:8px}
+
+  /* ---------- Sections ---------- */
+  main{padding-top:110px}
+  .container{max-width:var(--maxw);margin:0 auto;padding:36px 20px}
+
+  /* players grid */
+  .players-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .player-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:transform var(--trans)}
+  .player-card:hover{transform:translateY(-6px)}
+  .player-card .thumb{height:250px;border-radius:5px;overflow:hidden;background:linear-gradient(180deg,#202024,#18181b);display:flex;align-items:center;justify-content:center}
+  .player-card h4{margin:10px 0 4px;font-family:Oswald;font-size:16px}
+  .player-card p{margin:0;color:var(--muted);font-size:13px}
+
+  /* upcoming */
+  .upcoming-list{display:flex;flex-direction:column;gap:12px}
+  .game{display:flex;justify-content:space-between;padding:12px;border-radius:10px;background:var(--card);border:1px solid rgba(255,255,255,0.03)}
+
+  /* fixtures table */
+  table{width:100%;border-collapse:collapse;margin-top:8px}
+  th,td{padding:10px;border-bottom:1px dashed rgba(255,255,255,0.04);text-align:left}
+  th{color:var(--muted);font-weight:600;font-size:13px}
+
+  /* gallery */
+  .gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .gallery-grid img{width:100%;height:160px;object-fit:cover;border-radius:8px;cursor:pointer}
+
+  /* updates */
+  .updates{display:flex;flex-direction:column;gap:12px}
+  .update{padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));border:1px solid rgba(255,255,255,0.02)}
+
+  /* footer */
+  footer{padding:30px 20px;background:#070708;color:var(--muted);margin-top:30px}
+
+  /* player overlay (hidden page) */
+  .overlay{
+    position:fixed;inset:0;background:linear-gradient(180deg, rgb(0, 0, 0), rgba(0,0,0,0.9));z-index:120;display:none;align-items:center;justify-content:center;padding:20px;
+  }
+  .player-panel{width:100%;max-width:980px;background:linear-gradient(180deg,#021943,#0b0b0c);padding:20px;border-radius:12px;display:grid;grid-template-columns:290px 1fr;gap:20px;align-items:start}
+  .player-panel .left{background:linear-gradient(180deg,#19191c,#0f0f12);padding:18px;border-radius:10px;text-align:center}
+  .player-panel .left img{width:100%;height:auto;border-radius:8px;margin-bottom:12px}
+  .player-panel h2{margin:0 0 6px;font-family:Oswald}
+  .stats{display:flex;flex-wrap:wrap;gap:12px;margin-top:19px}
+  .stat{background:rgb(93, 5, 5);padding:10px;border-radius:8px;min-width:110px;text-align:center}
+
+  .close-btn{position:absolute;top:22px;right:22px;background:transparent;border:2px solid rgba(255,255,255,0.06);color:#fff;padding:8px 10px;border-radius:8px;cursor:pointer}
+
+  /* responsive */
+  @media (max-width:1000px){
+    .players-grid{grid-template-columns:repeat(3,1fr)}
+    .gallery-grid{grid-template-columns:repeat(3,1fr)}
+    .headline .line1,.headline .line2{font-size:64px}
+    .player-figure{width:55%}
+  }
+  @media (max-width:760px){
+    .players-grid{grid-template-columns:repeat(2,1fr)}
+    .gallery-grid{grid-template-columns:repeat(2,1fr)}
+    .player-panel{grid-template-columns:1fr}
+    .player-figure{position:relative;bottom:auto;left:auto;transform:none;width:70%;margin:12px auto 0}
+    .hero-ctas{position:relative;right:auto;bottom:auto;margin-top:20px;justify-content:center}
+    .logo-wrap img{height:48px}
+    .topbar-inner{padding:8px}
+    header .menu{display:none}
+  }
+  .contact {
+    text-align: center;
+    padding: 60px 20px;
+    background: #222;
+    color: white;
+}
+
+.whatsapp-btn {
+    display: inline-flex;
+    align-items: center;
+    background: #25D366;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-size: 1.2em;
+    transition: background 0.3s;
+}
+
+.whatsapp-btn img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+.whatsapp-btn:hover {
+    background: #20b857;
+}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<header class="topbar" role="banner">
+  <div class="topbar-inner">
+    <div class="left">
+      <div class="socials" aria-hidden="true">
+        
+      </div>
+
+      <nav class="menu" aria-label="Main menu">
+        <a href="#home" data-nav>Home</a>
+        <a href="#players" data-nav>Players</a>
+        <a href="#upcoming" data-nav>Upcoming</a>
+        <a href="#fixtures" data-nav>Fixtures</a>
+        <a href="#gallery" data-nav>Gallery</a>
+        <a href="#updates" data-nav>Updates</a>
+        <a href="#contact" data-nav>Contact</a>
+      </nav>
+    </div>
+
+    <!-- center logo -->
+    <div class="logo-wrap" aria-hidden="true">
+      <!-- Replace this src with your logo file -->
+      <img src="img90-removebg-preview.png" alt="200lvl Linguistics FC Logo" onerror="this.style.display='none'">
+    </div>
+
+   
+  </div>
+</header>
+
+<!-- HERO -->
+<section id="home" class="hero" aria-label="Hero section">
+  <div class="hero-bg" aria-hidden="true"></div>
+
+  <div class="hero-inner">
+    <div class="headline" role="heading" aria-level="1">
+      <div class="line1">ALIVE AND</div>
+      <div class="line2">KICKIN</div>
+    </div>
+    <div class="hero-sub">200lvl Linguistics Football Team — Season 2025</div>
+  </div>
+
+  <div class="player-figure" aria-hidden="true">
+    <!-- Replace with transparent PNG of a player; fallback placeholder used below if file not found -->
+    <img src="img90-removebg-preview.png" alt="Player" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22600%22 viewBox=%220 0 600 600%22><rect width=%22600%22 height=%22600%22 fill=%22%2317171a%22/><text x=%22300%22 y=%22310%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22%23ffffff%22 font-family=%22Arial%22>Player Image</text></svg>'">
+  </div>
+
+  <div class="hero-ctas" role="region" aria-label="Hero actions">
+    <button class="btn" onclick="scrollToSection('players')">Team</button>
+    <button class="btn primary" onclick="scrollToSection('upcoming')"></button>
+  </div>
+
+  <div class="side-nav" aria-hidden="true">
+    <div class="prev" onclick="prevSlide()">NALLS
+    </div>
+    <div class="next" onclick="nextSlide()">NALLS</div>
+  </div>
+</section>
+
+<main>
+  <!-- PLAYERS -->
+  <section id="players" class="container" aria-labelledby="players-title">
+    <h3 id="players-title" style="font-family:Oswald;margin:0 0 12px;font-size:22px">Players — 200lvl Linguistics FC</h3>
+    <p style="color:var(--muted);margin:0 0 18px">Click a player to view their stats and profile.</p>
+
+    <div class="players-grid" id="playersGrid" aria-live="polite">
+      <!-- JS will render player cards here -->
+    </div>
+  </section>
+
+  <!-- UPCOMING GAMES -->
+  <section id="upcoming" class="container" aria-labelledby="upcoming-title">
+    <h3 id="upcoming-title" style="font-family:Oswald;margin:0 0 12px;font-size:22px">Upcoming Games</h3>
+    <div class="upcoming-list" id="upcomingList">
+      <!-- JS will populate upcoming games -->
+    </div>
+  </section>
+
+  <!-- FIXTURES -->
+  <section id="fixtures" class="container" aria-labelledby="fixtures-title">
+    <h3 id="fixtures-title" style="font-family:Oswald;margin:0 0 12px;font-size:22px">Fixtures</h3>
+    <table id="fixturesTable" aria-describedby="fixtures-title">
+      <thead><tr><th>Date</th><th>Competition</th><th>Opponent</th><th>Venue</th><th>Time</th><th>Score</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <!-- GALLERY -->
+  <section id="gallery" class="container" aria-labelledby="gallery-title">
+    <h3 id="gallery-title" style="font-family:Oswald;margin:0 0 12px;font-size:22px">Gallery</h3>
+    <div class="gallery-grid" id="galleryGrid">
+      <!-- JS images -->
+    </div>
+  </section>
+
+  <!-- UPDATES -->
+  <section id="updates" class="container" aria-labelledby="updates-title">
+    <h3 id="updates-title" style="font-family:Oswald;margin:0 0 12px;font-size:22px">Updates & News</h3>
+    <div class="updates" id="updatesList">
+      <!-- JS updates -->
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+ <section id="contact" class="contact">
+    <h2>Contact Us</h2>
+    <p>Got questions? Chat with us on WhatsApp!</p>
+    <a href="https://wa.me/2348012345678?text=Hello%20I%20want%20to%20know%20more%20about%20the%20200lvl%20Linguistics%20Football%20Team" 
+       target="_blank" class="whatsapp-btn">
+        <img src="whatsapp.webp" alt="WhatsApp Icon"> Chat on WhatsApp
+    </a>
+</section>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container" style="display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap">
+    <div>
+      <strong>200lvl Linguistics Football Team</strong><br>
+      <small style="color:var(--muted)">Alumni & student club — passion first.</small>
+    </div>
+    <div style="color:var(--muted)">© <span id="year"></span> 200lvl Linguistics FC</div>
+  </div>
+</footer>
+
+<!-- PLAYER OVERLAY (hidden page) -->
+<div class="overlay" id="playerOverlay" role="dialog" aria-modal="true" aria-hidden="true">
+  <button class="close-btn" id="closeOverlay" aria-label="Close player panel">Close</button>
+  <div class="player-panel" id="playerPanel">
+    <div class="left">
+      <img id="panelPhoto" src="" alt="Player photo">
+      <h2 id="panelName">Player Name</h2>
+      <div id="panelRole" style="color:var(--muted);margin-bottom:8px">Position • No.</div>
+     
+      </div>
+    </div>
+
+    <div class="right">
+      <h3 style="margin-top:0">Stats</h3>
+      <div class="stats" id="panelStats">
+        <!-- stat boxes -->
+      </div>
+
+      <h3 style="margin-top:18px">Bio</h3>
+      <p id="panelBio" style="color:var(--muted)">Short bio and notes about the player. Age, year, and specialities.</p>
+
+      <h3 style="margin-top:18px">Recent Performances</h3>
+      <ul id="panelMatches" style="color:var(--muted)"></ul>
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox for gallery -->
+<div id="lightbox" style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.9);z-index:130">
+  <img id="lightboxImg" alt="Gallery image" style="max-width:94%;max-height:86%;border-radius:8px">
+</div>
+
+<script>
+/* ------------- Data ------------- */
+
+/* Players data (20 players). Each has: id, name, pos, number, bio, photo (assets/players/p{n}.jpg optional), stats */
+const players = [
+  {id:1,name:"Fabunmi Ayodeji Damilare.",pos:"Captain",number:10,photo:"img90.webp",bio:"3rd-year linguistics. Quick striker. Penalty specialist.",stats:{apps:0,goals:0,assists:0,yellow:0}},
+  {id:2,name:"Tiamiyu Abdulsalam Adedayo.",pos:"Keeper",number:1,photo:"TSA.jpeg",bio:"Playmaker and set-piece taker.",stats:{apps:0,goals:0,assists:0,yellow:0,cleanSheets:0,goalsConceded:0}},
+  {id:3,name:"⁠Adeyinka Paul Adeboye.",pos:"Keeper",number:12,photo:"paul.jpeg",bio:"Solid center-back, strong in the air.",stats:{apps:0,goals:0,assists:0,yellow:0,cleanSheets:0,goalsConceded:0}},
+  {id:4,name:"⁠Owolabi Olamilekan Remilekun.",pos:"Striker",number:9,photo:"lekan.jpeg",bio:"Reliable keeper. Excellent distribution.",stats:{apps:0,goals:0,assists:0}},
+  {id:5,name:"Adeyemi Elijah Mayowa.",pos:"Forward",number:11,photo:"assets/players/p5.jpg",bio:"Pacey winger with good crossing.",stats:{apps:0,goals:0,assists:0}},
+  {id:6,name:"Ajayi David Olamide.",pos:"Midfielder",number:6,photo:"assets/players/p6.jpg",bio:"Box-to-box midfielder.",stats:{apps:0,goals:0,assists:0}},
+  {id:7,name:"Dahunsi Ogooluwa Ebenezer.",pos:"Right Back",number:2,photo:"ogo.jpeg",bio:"Fullback who overlaps well.",stats:{apps:0,goals:0,assists:0}},
+  {id:8,name:"Oluwatunmise Samuel Ayomiposi.",pos:"Midfielder",number:10,photo:"assets/players/p8.jpg",bio:"Creative attacking mid.",stats:{apps:0,goals:0,assists:0}},
+  {id:9,name:"Olaniyi Joseph Olamilekan",pos:"Defender",number:3,photo:"ola.jpeg",bio:"Tactical defender.",stats:{apps:0,goals:0,assists:0}},
+  {id:10,name:"Afolabi Oluwatosin Oluwagbenga.",pos:"Forward",number:7,photo:"assets/players/p10.jpg",bio:"Powerful forward.",stats:{apps:0,goals:0,assists:0}},
+  {id:11,name:"Ayeni Oreoluwa Greatgrace.",pos:"Midfielder",number:14,photo:"assets/players/p11.jpg",bio:"Sets the tempo.",stats:{apps:0,goals:0,assists:0}},
+  {id:12,name:"Adeosebikan segun Abayomi.",pos:"Defender",number:3,photo:"assets/players/p12.jpg",bio:"Left back with pace.",stats:{apps:0,goals:0,assists:0}},
+  {id:13,name:"Ikuomola Daniel.",pos:"Forward",number:17,photo:"assets/players/p13.jpg",bio:"Super-sub with impact.",stats:{apps:0,goals:0,assists:0}},
+  {id:14,name:"Badru Oluwatumininu.",pos:"Midfielder",number:12,photo:"assets/players/p14.jpg",bio:"Strong ball-winner.",stats:{apps:0,goals:0,assists:0}},
+  {id:15,name:"Latef fawas morenikeji.",pos:"Goalkeeper",number:21,photo:"assets/players/p15.jpg",bio:"Backup keeper, solid shot-stopper.",stats:{apps:0,goals:0,assists:0,yellow:0}},
+  {id:16,name:"Megbowon Iwabiolorun.",pos:"Right Winger",number:7,photo:"cook.jpeg",bio:"Versatile center/left back.",stats:{apps:0,goals:0,assists:0}},
+  {id:17,name:"Iheanacho Daniel.",pos:"Defender",number:5,photo:"daniel.jpeg",bio:"Young prospect with flair.",stats:{apps:0,goals:0,assists:2}},
+  {id:18,name:"Godwin Samuel Erikefee.",pos:"Midfielder",number:16,photo:"alpha.jpeg",bio:"Energetic box-to-box.",stats:{apps:0,goals:0,assists:0}},
+  {id:19,name:"SALAU Abdulramon Tobiloba.",pos:"Defender",number:22,photo:"assets/players/p19.jpg",bio:"Strong tackler.",stats:{apps:0,goals:0,assists:0}},
+  {id:20,name:"Adedeji Adedolapo Daniel.",pos:"Midfielder",number:20,photo:"assets/players/p20.jpg",bio:"Accurate passer.",stats:{apps:0,goals:0,assists:0}}
+];
+
+/* Upcoming games */
+const upcoming = [
+  {date:'',opponent:'Unknown',venue:'Home',time:'15:00'},
+  {date:'2025-08-17',opponent:'Unknown',venue:'Away',time:'16:00'},
+  {date:'2025-08-24',opponent:'Unknown',venue:'Home',time:'14:00'}
+];
+
+/* Fixtures (extended) */
+const fixtures = [
+  {date:'TBD',comp:'Mayor Champions Cup',opponent:'Unknown',venue:'H',time:'15:00',score:'Not played'},
+  {date:'TBD',comp:'HOD Cup',opponent:'Unknown',venue:'A',time:'16:00',score:'Not played'},
+  {date:'TBD',comp:'League',opponent:'Unknown',venue:'H',time:'14:00',score:'Not played'},
+  {date:'TBD',comp:'League',opponent:'Unknown ',venue:'H',time:'15:00',score:'Not played'},
+  {date:'TBD',comp:'League',opponent:'Unknown',venue:'A',time:'16:00',score:'Not played'},
+];
+
+/* Gallery images (use assets/gallery/g1.jpg..g8.jpg) */
+const gallery = [
+  'gall1.jpeg','assets/gallery/g2.jpg','gall2.jpeg','assets/gallery/g4.jpg',
+  'assets/gallery/g5.jpg','assets/gallery/g6.jpg','assets/gallery/g7.jpg','assets/gallery/g8.jpg'
+];
+
+/* Updates */
+const updates = [
+  {date:'2025-07-25',title:'Training Camp Kicks Off',body:'Training camp starts next week. Squad to report to University Grounds.'},
+  {date:'2025-07-18',title:'New Kit Sponsor',body:'We are happy to welcome LinguaSports as our kit sponsor.'},
+  {date:'2025-06-30',title:'Season Recap',body:'An excellent first half of the season — see top moments in the gallery.'}
+];
+
+/* ------------- Helpers & Renderers ------------- */
+
+function mkPlayerCard(p){
+  const div = document.createElement('div');
+  div.className = 'player-card';
+  div.setAttribute('tabindex',0);
+  div.innerHTML = `
+    <div class="thumb">
+      <img src="${p.photo}" alt="${p.name}" onerror="this.src=playerPlaceholder('${p.name}')">
+    </div>
+    <h4>${p.name}</h4>
+    <p>${p.pos} • #${p.number}</p>
+  `;
+  div.addEventListener('click', ()=> openPlayer(p.id));
+  div.addEventListener('keypress', (e)=>{ if(e.key==='Enter') openPlayer(p.id) });
+  return div;
+}
+
+/* placeholder svg as data URL with initials */
+function playerPlaceholder(name){
+  const initials = name.split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase();
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600'><rect width='100%' height='100%' fill='%231a1a1d'/><text x='50%' y='52%' font-size='80' text-anchor='middle' fill='%23fff' font-family='Arial'>${initials}</text></svg>`;
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+}
+
+/* render players */
+function renderPlayers(){
+  const grid = document.getElementById('playersGrid');
+  grid.innerHTML = '';
+  players.forEach(p => grid.appendChild(mkPlayerCard(p)));
+}
+
+/* render upcoming */
+function renderUpcoming(){
+  const el = document.getElementById('upcomingList');
+  el.innerHTML = '';
+  upcoming.forEach(g=>{
+    const d = new Date(g.date);
+    const row = document.createElement('div');
+    row.className = 'game';
+    row.innerHTML = `<div><strong>${g.opponent}</strong><div style="color:var(--muted)">${g.venue} • ${d.toLocaleDateString()} </div></div><div style="text-align:right"><div style="font-weight:700">${g.time}</div><div style="color:var(--muted)">${d.toLocaleDateString()}</div></div>`;
+    el.appendChild(row);
+  });
+}
+
+/* render fixtures */
+function renderFixtures(){
+  const tbody = document.querySelector('#fixturesTable tbody');
+  tbody.innerHTML = '';
+  fixtures.forEach(r=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${(new Date(r.date)).toLocaleDateString()}</td><td>${r.comp}</td><td>${r.opponent}</td><td>${r.venue}</td><td>${r.time}</td><td>${r.score ? r.score : 'TBD'}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+/* render gallery */
+function renderGallery(){
+  const g = document.getElementById('galleryGrid');
+  g.innerHTML = '';
+  gallery.forEach(src=>{
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = 'Gallery';
+    img.onerror = function(){ this.style.background='#1b1b1d'; this.style.height='160px'; this.style.display='block'; this.style.borderRadius='8px'; this.src=''; this.insertAdjacentHTML('afterend',''); }
+    img.addEventListener('click', ()=> openLightbox(src));
+    g.appendChild(img);
+  });
+}
+
+/* render updates */
+function renderUpdates(){
+  const u = document.getElementById('updatesList');
+  u.innerHTML = '';
+  updates.forEach(it=>{
+    const el = document.createElement('div');
+    el.className = 'update';
+    el.innerHTML = `<strong>${it.title}</strong><div style="color:var(--muted);font-size:13px">${(new Date(it.date)).toLocaleDateString()}</div><p style="margin:8px 0 0">${it.body}</p>`;
+    u.appendChild(el);
+  });
+}
+
+/* player overlay functions */
+const overlay = document.getElementById('playerOverlay');
+const panelPhoto = document.getElementById('panelPhoto');
+const panelName = document.getElementById('panelName');
+const panelRole = document.getElementById('panelRole');
+const panelBio = document.getElementById('panelBio');
+const panelStats = document.getElementById('panelStats');
+const panelMatches = document.getElementById('panelMatches');
+
+function openPlayer(id){
+  const p = players.find(x=>x.id===id);
+  if(!p) return;
+  // populate
+  panelPhoto.src = p.photo; panelPhoto.onerror = function(){ this.src = playerPlaceholder(p.name) };
+  panelName.textContent = p.name;
+  panelRole.textContent = `${p.pos} • #${p.number}`;
+  panelBio.textContent = p.bio || '—';
+  panelStats.innerHTML = '';
+  // show stats as key/value
+  const s = p.stats || {};
+  Object.entries(s).forEach(([k,v]) => {
+    const stat = document.createElement('div');
+    stat.className = 'stat';
+    stat.innerHTML = `<div style="font-weight:700">${v}</div><div style="color:var(--muted);font-size:12px">${k.toUpperCase()}</div>`;
+    panelStats.appendChild(stat);
+  });
+  // sample recent matches
+  panelMatches.innerHTML = '';
+  const recent = [
+    `${p.name} vs Linguaphiles — 1 goal`,
+    `${p.name} vs Syntax Town — 2 assists`,
+    `${p.name} vs Phonetics FC — 1 yellow`
+  ];
+  recent.forEach(r=>{
+    const li = document.createElement('li'); li.style.marginBottom='6px'; li.style.color='var(--muted)';
+    li.textContent = r; panelMatches.appendChild(li);
+  });
+
+  // show overlay
+  overlay.style.display = 'flex';
+  overlay.setAttribute('aria-hidden','false');
+  document.body.style.overflow = 'hidden';
+  // update hash for routing
+  history.pushState(null, '', '#player-' + p.id);
+}
+
+/* close overlay */
+document.getElementById('closeOverlay').addEventListener('click', closeOverlay);
+overlay.addEventListener('click', (e)=>{ if(e.target===overlay) closeOverlay(); });
+
+function closeOverlay(){
+  overlay.style.display = 'none';
+  overlay.setAttribute('aria-hidden','true');
+  document.body.style.overflow = '';
+  // remove player hash
+  if(location.hash && location.hash.startsWith('#player-')) history.pushState(null, '', '#players');
+}
+
+/* lightbox */
+function openLightbox(src){
+  const lb = document.getElementById('lightbox');
+  const img = document.getElementById('lightboxImg');
+  img.src = src; img.onerror = function(){ this.src=''; this.alt='Image not available'; }
+  lb.style.display = 'flex';
+  lb.addEventListener('click', ()=>{ lb.style.display='none'; });
+}
+
+/* header nav smooth scroll */
+function scrollToSection(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+  history.pushState(null,'', '#'+id);
+}
+
+/* fake slider prev/next */
+function prevSlide(){ alert('Prev slide — demo'); }
+function nextSlide(){ alert('Next slide — demo'); }
+
+/* init */
+function init(){
+  renderPlayers();
+  renderUpcoming();
+  renderFixtures();
+  renderGallery();
+  renderUpdates();
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // simple routing: if direct #player-{id} in URL open overlay
+  if(location.hash){
+    if(location.hash.startsWith('#player-')){
+      const id = parseInt(location.hash.split('-')[1],10);
+      setTimeout(()=>openPlayer(id), 400); // small delay so page loads before overlay
+    } else {
+      const target = document.querySelector(`[id="${location.hash.substring(1)}"]`);
+      if(target) setTimeout(()=>target.scrollIntoView({behavior:'smooth'}), 100);
+    }
+  }
+
+  // keyboard escape to close overlay/lightbox
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ closeOverlay(); document.getElementById('lightbox').style.display='none'; }});
+}
+
+init();
+</script>
+</body>
+</html>
