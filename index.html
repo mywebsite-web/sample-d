@@ -1,581 +1,1162 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=1024">
-<title>200lvl Linguistics Football Team</title>
-
-<!-- Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;800&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
-
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<title>Demo PalmPay-style Dashboard</title>
 <style>
-  /* ---------- Variables & Reset ---------- */
-  :root{
-    --accent:#f2b705;
-    --dark:#111214;
-    --muted:#9a9aa0;
-    --card:#1f1f24;
-    --glass: rgba(255,255,255,0.03);
-    --maxw:1200px;
-    --trans:.28s;
+  :root {
+    --bg: #0c0c0f;
+    --panel: #0f1720;
+    --muted: #9aa2b2;
+    --purple: #7c3aed;
+    --purple-2: #5b21b6;
+    --card: #111217;
+    --accent: #ffd166;
+    /* Custom mobile size variables (adjust these values as needed) */
+    --mobile-width: 360px;
+    --mobile-height: 640px;
   }
-  *{box-sizing:border-box}
-  html,body{height:100%;margin:0;background:#0f0f12;color:#fff;font-family:Montserrat,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial }
-  a{color:inherit;text-decoration:none}
-  img{max-width:100%;display:block}
-
-  /* ---------- Top navigation ---------- */
-  .topbar{
-    position:fixed;left:0;right:0;top:0;z-index:40;
-    backdrop-filter: blur(4px);
-    border-bottom:1px solid rgba(255,255,255,0.03);
-    background: linear-gradient(180deg, rgba(10,10,12,0.65), rgba(10,10,12,0.35));
+  * { box-sizing: border-box; }
+  html, body { 
+    height: 100dvh; 
+    margin: 0; 
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; 
+    background: var(--bg); 
+    color: #fff; 
+    -webkit-font-smoothing: antialiased; 
+    overflow-x: hidden;
   }
-  .topbar-inner{
-    max-width:var(--maxw);margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;
+  .app { 
+    max-width: 420px; 
+    margin: 0 auto; 
+    min-height: 100dvh; 
+    display: flex; 
+    flex-direction: column; 
+    padding-bottom: 96px; 
   }
-  .left, .right {display:flex;align-items:center;gap:12px}
-  .menu{display:flex;gap:18px;align-items:center;font-weight:600;letter-spacing:.6px}
-  .menu a{font-size:13px;color:#eae9eb;opacity:.95}
-  .logo-wrap{position:absolute;left:50%;top:8px;transform:translateX(-50%);pointer-events:none}
-  .logo-wrap img{height:56px}
-
-  /* ---------- Hero ---------- */
-  .hero{
-    min-height:100vh;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  header { display: flex; align-items: center; gap: 10px; padding: 12px 12px 4px; }
+  .avatar { 
+    width: 40px; 
+    height: 40px; 
+    border-radius: 8px; 
+    overflow: hidden; 
+    background: linear-gradient(135deg, #111, #2b2b2b); 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-weight: 700; 
+    font-size: 14px; 
+  }
+  .avatar img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    object-position: center; 
+  }
+  .greet { flex: 1; }
+  .greet small { display: block; color: var(--muted); font-size: 12px; }
+  .icons { display: flex; gap: 6px; align-items: center; }
+  .icon-btn { 
+    width: 32px; 
+    height: 32px; 
+    border-radius: 8px; 
+    background: #0f1113; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    border: 1px solid rgba(255,255,255,0.03); 
+  }
+  /* Balance card */
+  .balance-card { 
+    margin: 8px 12px; 
+    padding: 12px; 
+    border-radius: 12px; 
+    background: linear-gradient(90deg, var(--purple), var(--purple-2)); 
+    position: relative; 
+    overflow: visible; 
+    box-shadow: 0 6px 20px rgba(91,33,182,0.18); 
+  }
+  .balance-row { display: flex; align-items: center; justify-content: space-between; }
+  .balance-label { font-size: 12px; opacity: 0.95; display: flex; align-items: center; gap: 6px; }
+  .balance-value { font-weight: 800; font-size: 24px; margin-top: 6px; }
+  .balance-actions { display: flex; gap: 8px; align-items: center; }
+  .small-btn { 
+    background: rgba(0,0,0,0.2); 
+    border: none; 
+    color: #fff; 
+    padding: 6px 8px; 
+    border-radius: 999px; 
+    font-weight: 600; 
+    cursor: pointer; 
+    font-size: 12px; 
+  }
+  .ghost { 
+    background: transparent; 
+    border: 1px solid rgba(255,255,255,0.12); 
+    padding: 6px 10px; 
+    border-radius: 999px; 
+    font-size: 12px; 
+  }
+  .add-money { 
+    position: absolute; 
+    right: 10px; 
+    top: 10px; 
+    background: rgba(255,255,255,0.06); 
+    padding: 6px 10px; 
+    border-radius: 999px; 
+    border: none; 
+    color: #fff; 
+    cursor: pointer; 
+    font-size: 12px; 
+  }
+  .transaction-history { 
+    position: absolute; 
+    right: 10px; 
+    bottom: 10px; 
+    background: rgba(0,0,0,0.16); 
+    padding: 6px 10px; 
+    border-radius: 10px; 
+    border: none; 
+    color: #fff; 
+    cursor: pointer; 
+    font-weight: 600; 
+    font-size: 12px; 
+  }
+  /* Quick actions grid */
+  .quick-actions { 
+    display: grid; 
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 10px; 
+    margin: 12px; 
+  }
+  .action { 
+    background: #0f1113; 
+    padding: 10px; 
+    border-radius: 10px; 
+    text-align: center; 
+    font-size: 12px; 
+    border: 1px solid rgba(255,255,255,0.02); 
+    cursor: pointer; 
+  }
+  .action .emoji { display: block; font-size: 18px; margin-bottom: 4px; }
+  /* Cashbox & features row */
+  .cashbox { 
+    margin: 0 12px; 
+    background: #111318; 
+    padding: 10px; 
+    border-radius: 10px; 
+    margin-bottom: 10px; 
+    border: 1px solid rgba(255,255,255,0.02); 
+  }
+  .cashbox small { color: var(--muted); display: block; font-size: 12px; }
+  /* Promo / cards */
+  .promos { padding: 0 12px; display: flex; flex-direction: column; gap: 10px; }
+  .card { 
+    background: #0f1113; 
+    padding: 12px; 
+    border-radius: 10px; 
+    border: 1px solid rgba(255,255,255,0.02); 
+  }
+  .card h4 { margin: 0 0 6px 0; font-size: 14px; }
+  .horizontal-banner { 
+    background: linear-gradient(90deg, #fff, #eee); 
+    color: #111; 
+    padding: 12px; 
+    border-radius: 10px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+  }
+  .banner-left { font-weight: 700; font-size: 14px; }
+  /* Transactions panel */
+  .transactions { margin: 8px 12px 80px 12px; }
+  .transactions h3 { margin: 0 0 8px 0; font-size: 16px; font-weight: 700; }
+  .bank-banner {
+    position: relative;
+    margin-bottom: 10px;
+    background: linear-gradient(90deg, #f5f7fa, #e0e7ff);
+    padding: 10px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .bank-banner img {
+    width: 100%;
+    max-height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    display: block;
+  }
+  .banner-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #4a90e2;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 18px;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  .filter-row { display: flex; gap: 10px; margin-bottom: 10px; }
+  .filter-select {
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.02);
     background: #0b0b0c;
+    color: #fff;
+    font-size: 12px;
+    flex: 1;
   }
-  .hero-bg{
-    position:absolute;inset:0;background-image:linear-gradient(180deg, rgba(2,2,4,0.55), rgba(2,2,4,0.7)), url('assets/hero-bg-polygon.jpg');
-    background-size:cover;background-position:center;filter:contrast(.95) brightness(.7);
-    transform: translateZ(0); z-index:0;
+  .balance-summary {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    color: var(--muted);
+    font-size: 12px;
   }
-
-  .hero-inner{
-    position:relative;z-index:6;max-width:var(--maxw);width:calc(100% - 40px);text-align:center;padding:40px 0;
+  ul.tx { list-style: none; padding: 0; margin: 0; }
+  ul.tx li { 
+    display: flex; 
+    justify-content: space-between; 
+    padding: 8px 10px; 
+    border-radius: 8px; 
+    background: #1a1a1f; 
+    margin-bottom: 6px; 
+    align-items: center; 
   }
-  .headline{font-family:Oswald, sans-serif;font-weight:800;line-height:0.9;letter-spacing:2px}
-  .headline .line1{font-size:96px;color:var(--accent);margin:0}
-  .headline .line2{font-size:96px;color:#fff;margin:0;margin-top:6px}
-  .hero-sub{margin-top:10px;color:var(--muted);font-weight:600}
-
-  /* player figure */
-  .player-figure{
-    position:absolute;left:50%;transform:translateX(-50%);bottom:120px;z-index:5;pointer-events:none;
-    width:44%;max-width:650px;
+  .tx-meta { display: flex; gap: 6px; align-items: center; }
+  .tx-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
   }
-  .player-figure img{display:block;width:100%;height:auto;filter:drop-shadow(0 40px 50px rgba(0,0,0,.6))}
-
-  /* CTA */
-  .hero-ctas{position:absolute;right:48px;bottom:48px;z-index:7;display:flex;gap:12px}
-  .btn{
-    border-radius:8px;padding:12px 18px;font-weight:800;text-transform:uppercase;border:2px solid rgba(255,255,255,0.08);
-    background:transparent;color:var(--accent);cursor:pointer;transition:all var(--trans);
+  .tx-category { font-weight: 700; font-size: 14px; }
+  .tx-time { color: var(--muted); font-size: 11px; }
+  .tx-amount { font-weight: 700; font-size: 14px; }
+  .tx-amount.in { color: #22c55e; }
+  .tx-amount.out { color: #ef4444; }
+  /* Form area like send / withdraw / status */
+  .form-card { 
+    position: fixed; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    margin: 8px; 
+    display: none; 
+    padding: 16px; 
+    border-radius: 10px; 
+    background: #0f1113; 
+    border: 1px solid rgba(255,255,255,0.02); 
+    z-index: 10; 
+    width: 90%; 
+    max-width: 360px; 
+    backdrop-filter: blur(8px); 
+    -webkit-backdrop-filter: blur(8px); 
+    background: rgba(15, 17, 19, 0.9); 
   }
-  .btn.primary{background:var(--accent);color:#111;border-color:var(--accent)}
-  .btn:hover{transform:translateY(-4px)}
-
-  /* side prev/next */
-  .side-nav{position:absolute;top:50%;left:0;right:0;pointer-events:none;z-index:8}
-  .side-nav .prev,.side-nav .next{
-    position:absolute;pointer-events:auto;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);
-    writing-mode:vertical-rl;transform:rotate(180deg);font-size:14px;
+  .form-card.active { display: flex; flex-direction: column; }
+  input[type="text"], input[type="number"] { 
+    width: 100%; 
+    padding: 8px; 
+    border-radius: 6px; 
+    border: none; 
+    margin: 6px 0; 
+    background: #0b0b0c; 
+    color: #fff; 
+    font-size: 14px; 
   }
-  .side-nav .prev{left:8px}
-  .side-nav .next{right:8px}
-
-  /* ---------- Sections ---------- */
-  main{padding-top:110px}
-  .container{max-width:var(--maxw);margin:0 auto;padding:36px 20px}
-
-  /* players grid */
-  .players-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-  .player-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:transform var(--trans)}
-  .player-card:hover{transform:translateY(-6px)}
-  .player-card .thumb{height:250px;border-radius:5px;overflow:hidden;background:linear-gradient(180deg,#202024,#18181b);display:flex;align-items:center;justify-content:center}
-  .player-card h4{margin:10px 0 4px;font-family:Oswald;font-size:16px}
-  .player-card p{margin:0;color:var(--muted);font-size:13px}
-
-  /* upcoming */
-  .upcoming-list{display:flex;flex-direction:column;gap:12px}
-  .game{display:flex;justify-content:space-between;padding:12px;border-radius:10px;background:var(--card);border:1px solid rgba(255,255,255,0.03)}
-
-  /* fixtures table */
-  table{width:100%;border-collapse:collapse;margin-top:8px}
-  th,td{padding:10px;border-bottom:1px dashed rgba(255,255,255,0.04);text-align:left}
-  th{color:var(--muted);font-weight:600;font-size:13px}
-
-  /* gallery */
-  .gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-  .gallery-grid img{width:100%;height:160px;object-fit:cover;border-radius:8px;cursor:pointer}
-
-  /* updates */
-  .updates{display:flex;flex-direction:column;gap:12px}
-  .update{padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));border:1px solid rgba(255,255,255,0.02)}
-
-  /* footer */
-  footer{padding:30px 20px;background:#070708;color:var(--muted);margin-top:30px}
-
-  /* player overlay (hidden page) */
-  .overlay{
-    position:fixed;inset:0;background:linear-gradient(180deg, rgb(0, 0, 0), rgba(0,0,0,0.9));z-index:120;display:none;align-items:center;justify-content:center;padding:20px;
+  .primary { 
+    background: var(--purple); 
+    border: none; 
+    color: #fff; 
+    padding: 8px 10px; 
+    border-radius: 6px; 
+    width: 100%; 
+    font-weight: 700; 
+    cursor: pointer; 
+    font-size: 14px; 
   }
-  .player-panel{width:100%;max-width:980px;background:linear-gradient(180deg,#021943,#0b0b0c);padding:20px;border-radius:12px;display:grid;grid-template-columns:290px 1fr;gap:20px;align-items:start}
-  .player-panel .left{background:linear-gradient(180deg,#19191c,#0f0f12);padding:18px;border-radius:10px;text-align:center}
-  .player-panel .left img{width:100%;height:auto;border-radius:8px;margin-bottom:12px}
-  .player-panel h2{margin:0 0 6px;font-family:Oswald}
-  .stats{display:flex;flex-wrap:wrap;gap:12px;margin-top:19px}
-  .stat{background:rgb(93, 5, 5);padding:10px;border-radius:8px;min-width:110px;text-align:center}
-
-  .close-btn{position:absolute;top:22px;right:22px;background:transparent;border:2px solid rgba(255,255,255,0.06);color:#fff;padding:8px 10px;border-radius:8px;cursor:pointer}
-
-  /* responsive */
-  @media (max-width:1000px){
-    .players-grid{grid-template-columns:repeat(3,1fr)}
-    .gallery-grid{grid-template-columns:repeat(3,1fr)}
-    .headline .line1,.headline .line2{font-size:64px}
-    .player-figure{width:55%}
+  .status { margin-top: 6px; font-size: 13px; }
+  .success-screen { 
+    position: fixed; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    margin: 8px; 
+    display: none; 
+    padding: 16px; 
+    border-radius: 10px; 
+    background: #0f1113; 
+    border: 1px solid rgba(255,255,255,0.02); 
+    z-index: 10; 
+    width: 90%; 
+    max-width: 360px; 
+    backdrop-filter: blur(8px); 
+    -webkit-backdrop-filter: blur(8px); 
+    background: rgba(15, 17, 19, 0.9); 
   }
-  @media (max-width:760px){
-    .players-grid{grid-template-columns:repeat(2,1fr)}
-    .gallery-grid{grid-template-columns:repeat(2,1fr)}
-    .player-panel{grid-template-columns:1fr}
-    .player-figure{position:relative;bottom:auto;left:auto;transform:none;width:70%;margin:12px auto 0}
-    .hero-ctas{position:relative;right:auto;bottom:auto;margin-top:20px;justify-content:center}
-    .logo-wrap img{height:48px}
-    .topbar-inner{padding:8px}
-    header .menu{display:none}
+  .success-screen.active { display: flex; flex-direction: column; }
+  .receipt { padding: 8px; background: #1a1a1f; border-radius: 6px; }
+  /* Bottom nav */
+  nav.bottom { 
+    position: fixed; 
+    left: 0; 
+    right: 0; 
+    bottom: 0; 
+    height: 64px; 
+    background: linear-gradient(180deg, #060607, rgba(6,6,6,0.4)); 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    border-top: 1px solid rgba(255,255,255,0.03); 
+    z-index: 5; 
   }
-  .contact {
-    text-align: center;
-    padding: 60px 20px;
-    background: #222;
-    color: white;
-}
-
-.whatsapp-btn {
+  .bottom-inner { 
+    max-width: 420px; 
+    display: flex; 
+    justify-content: space-between; 
+    padding: 8px 20px; 
+    width: 100%; 
+  }
+  .nav-item { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    font-size: 11px; 
+    color: var(--muted); 
+    gap: 4px; 
+    cursor: pointer; 
+  }
+  .nav-item.active { color: #fff; }
+  /* Modal */
+  .modal { 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    bottom: 0; 
+    background: rgba(2,6,23,0.7); 
+    display: none; 
+    align-items: flex-start; 
+    justify-content: center; 
+    padding: 12px; 
+    overflow-y: auto; 
+  }
+  .modal .sheet { 
+    background: #0b0b0d; 
+    border-radius: 10px; 
+    width: 100%; 
+    max-width: 400px; 
+    padding: 12px; 
+    margin-top: 12px; 
+  }
+  .close-x { 
+    background: transparent; 
+    border: none; 
+    color: var(--muted); 
+    font-weight: 700; 
+    cursor: pointer; 
+    font-size: 14px; 
+  }
+  .tx-list { margin-top: 8px; }
+  .tx-row { 
+    display: flex; 
+    justify-content: space-between; 
+    padding: 8px; 
+    border-radius: 6px; 
+    background: #0f1113; 
+    margin-bottom: 6px; 
+    align-items: center; 
+  }
+  .tx-details { margin-top: 8px; }
+  .tx-detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    background: #0f1113;
+    border-radius: 6px;
+    margin-bottom: 6px;
+  }
+  .tx-detail-label { color: var(--muted); font-size: 12px; }
+  .tx-detail-value { font-weight: 700; color: #fff; font-size: 12px; }
+  .small-muted { color: var(--muted); font-size: 12px; }
+  /* Responsive */
+  @media (max-width: 600px) {
+    .app {
+      width: var(--mobile-width);
+      height: var(--mobile-height);
+      max-width: var(--mobile-width);
+      min-height: unset;
+      margin: 0 auto;
+      overflow-y: auto;
+    }
+    .balance-card, .cashbox, .promos, .transactions {
+      width: calc(var(--mobile-width) - 24px);
+    }
+    .form-card {
+      max-width: calc(var(--mobile-width) - 16px);
+    }
+    .success-screen {
+      max-width: calc(var(--mobile-width) - 16px);
+    }
+    .modal .sheet {
+      max-width: calc(var(--mobile-width) - 24px);
+    }
+    .bottom-inner {
+      max-width: var(--mobile-width);
+    }
+  }
+  @media (max-width: 360px) {
+    .app { padding-bottom: 80px; }
+    .quick-actions { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .balance-value { font-size: 20px; }
+    .header { padding: 10px; }
+    .nav-item { font-size: 10px; }
+    .bottom-inner { padding: 8px 12px; }
+  }
+  .eye-toggle {
+    cursor: pointer;
+    margin-left: 6px;
     display: inline-flex;
     align-items: center;
-    background: #25D366;
-    color: white;
-    padding: 12px 20px;
-    border-radius: 30px;
-    text-decoration: none;
-    font-size: 1.2em;
-    transition: background 0.3s;
-}
-
-.whatsapp-btn img {
-    width: 24px;
-    height: 24px;
-    margin-right: 10px;
-}
-
-.whatsapp-btn:hover {
-    background: #20b857;
-}
+  }
+  .eye-toggle.active #eyeInner { opacity: 0.3; }
+  /* Loading state */
+  .primary.loading {
+    opacity: 0.7;
+    pointer-events: none;
+    position: relative;
+  }
+  .primary.loading::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 2px solid #fff;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  @keyframes spin {
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+  }
 </style>
 </head>
 <body>
-
-<!-- TOP NAV -->
-<header class="topbar" role="banner">
-  <div class="topbar-inner">
-    <div class="left">
-      <div class="socials" aria-hidden="true">
-        
+<div class="app" id="app">
+  <header>
+    <label class="avatar" for="profileUpload">
+      <img src="pics.jpg" id="profilePic" alt="Profile Picture">
+      <input type="file" id="profileUpload" accept="image/*" style="display:none;" onchange="handleProfileUpload(event)">
+    </label>
+    <div class="greet">
+      <div style="font-weight:700">Hi, <span style="letter-spacing:0.6px">Abdulsalam</span></div>
+      <small class="small-muted">Welcome back 👋</small>
+    </div>
+    <div class="icons">
+      <div class="icon-btn" title="Support">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" d="M3 13a9 9 0 0118 0v4a2 2 0 01-2 2h-1a1 1 0 01-1-1v-5a4 4 0 00-8 0v5a1 1 0 01-1 1H6a2 2 0 01-2-2v-4z"/></svg>
       </div>
-
-      <nav class="menu" aria-label="Main menu">
-        <a href="#home" data-nav>Home</a>
-        <a href="#players" data-nav>Players</a>
-        <a href="#upcoming" data-nav>Upcoming</a>
-        <a href="#fixtures" data-nav>Fixtures</a>
-        <a href="#gallery" data-nav>Gallery</a>
-        <a href="#updates" data-nav>Updates</a>
-        <a href="#contact" data-nav>Contact</a>
-      </nav>
+      <div class="icon-btn" title="Notifications"> <span style="font-weight:800;color:#ff3b30;font-size:11px">99+</span></div>
     </div>
+  </header>
 
-    <!-- center logo -->
-    <div class="logo-wrap" aria-hidden="true">
-      <!-- Replace this src with your logo file -->
-      <img src="img90-removebg-preview.png" alt="200lvl Linguistics FC Logo" onerror="this.style.display='none'">
+  <!-- Balance Card -->
+  <div class="balance-card">
+    <div class="balance-row">
+      <div>
+        <div class="balance-label">Available Balance <span class="eye-toggle" id="eyeToggle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <path stroke="rgba(255,255,255,0.5)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/>
+            <circle cx="12" cy="12" r="3" stroke="rgba(255,255,255,0.5)" stroke-width="1.4" id="eyeInner"/>
+          </svg>
+        </span></div>
+        <div class="balance-value" id="balanceDisplay">₦556,489.00</div>
+      </div>
+      <div class="balance-actions">
+        <button class="add-money" id="btnAddMoney">Add Money ▸</button>
+      </div>
     </div>
-
-   
-  </div>
-</header>
-
-<!-- HERO -->
-<section id="home" class="hero" aria-label="Hero section">
-  <div class="hero-bg" aria-hidden="true"></div>
-
-  <div class="hero-inner">
-    <div class="headline" role="heading" aria-level="1">
-      <div class="line1">ALIVE AND</div>
-      <div class="line2">KICKIN</div>
-    </div>
-    <div class="hero-sub">200lvl Linguistics Football Team — Season 2025</div>
+    <button class="transaction-history" id="btnHistory">Transaction History</button>
   </div>
 
-  <div class="player-figure" aria-hidden="true">
-    <!-- Replace with transparent PNG of a player; fallback placeholder used below if file not found -->
-    <img src="img90-removebg-preview.png" alt="Player" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22600%22 viewBox=%220 0 600 600%22><rect width=%22600%22 height=%22600%22 fill=%22%2317171a%22/><text x=%22300%22 y=%22310%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22%23ffffff%22 font-family=%22Arial%22>Player Image</text></svg>'">
+  <!-- Quick action grid -->
+  <div class="quick-actions">
+    <div class="action" id="toBank"><span class="emoji">🏦</span>To Bank</div>
+    <div class="action" id="withdraw"><span class="emoji">💸</span>Withdraw</div>
+    <div class="action"><span class="emoji">👥</span>To PalmPay</div>
+    <div class="action"><span class="emoji">💰</span>Savings</div>
+    <div class="action"><span class="emoji">💳</span>ATM Card</div>
+    <div class="action"><span class="emoji">📞</span>Airtime</div>
+    <div class="action"><span class="emoji">📶</span>Data</div>
+    <div class="action"><span class="emoji">⚽</span>Betting</div>
   </div>
 
-  <div class="hero-ctas" role="region" aria-label="Hero actions">
-    <button class="btn" onclick="scrollToSection('players')">Team</button>
-    <button class="btn primary" onclick="scrollToSection('upcoming')"></button>
+  <!-- CashBox -->
+  <div class="cashbox">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-weight:700">CashBox</div>
+        <small class="small-muted">₦0.13 Interest Payout</small>
+      </div>
+      <div style="font-size:12px;color:var(--muted)">Today 6:01 AM</div>
+    </div>
   </div>
 
-  <div class="side-nav" aria-hidden="true">
-    <div class="prev" onclick="prevSlide()">NALLS
+  <!-- Promo / PalmPoints -->
+  <div class="promos">
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-weight:700">30 PalmPoints Await</div>
+        <small class="small-muted">Click to claim your PalmPoints</small>
+      </div>
+      <button class="ghost" id="btnClaim">Claim</button>
     </div>
-    <div class="next" onclick="nextSlide()">NALLS</div>
-  </div>
-</section>
 
-<main>
-  <!-- PLAYERS -->
-  <section id="players" class="container" aria-labelledby="players-title">
-    <h3 id="players-title" style="font-family:Oswald;margin:0 0 12px;font-size:22px">Players — 200lvl Linguistics FC</h3>
-    <p style="color:var(--muted);margin:0 0 18px">Click a player to view their stats and profile.</p>
-
-    <div class="players-grid" id="playersGrid" aria-live="polite">
-      <!-- JS will render player cards here -->
-    </div>
-  </section>
-
-  <!-- UPCOMING GAMES -->
-  <section id="upcoming" class="container" aria-labelledby="upcoming-title">
-    <h3 id="upcoming-title" style="font-family:Oswald;margin:0 0 12px;font-size:22px">Upcoming Games</h3>
-    <div class="upcoming-list" id="upcomingList">
-      <!-- JS will populate upcoming games -->
-    </div>
-  </section>
-
-  <!-- FIXTURES -->
-  <section id="fixtures" class="container" aria-labelledby="fixtures-title">
-    <h3 id="fixtures-title" style="font-family:Oswald;margin:0 0 12px;font-size:22px">Fixtures</h3>
-    <table id="fixturesTable" aria-describedby="fixtures-title">
-      <thead><tr><th>Date</th><th>Competition</th><th>Opponent</th><th>Venue</th><th>Time</th><th>Score</th></tr></thead>
-      <tbody></tbody>
-    </table>
-  </section>
-
-  <!-- GALLERY -->
-  <section id="gallery" class="container" aria-labelledby="gallery-title">
-    <h3 id="gallery-title" style="font-family:Oswald;margin:0 0 12px;font-size:22px">Gallery</h3>
-    <div class="gallery-grid" id="galleryGrid">
-      <!-- JS images -->
-    </div>
-  </section>
-
-  <!-- UPDATES -->
-  <section id="updates" class="container" aria-labelledby="updates-title">
-    <h3 id="updates-title" style="font-family:Oswald;margin:0 0 12px;font-size:22px">Updates & News</h3>
-    <div class="updates" id="updatesList">
-      <!-- JS updates -->
-    </div>
-  </section>
-
-  <!-- CONTACT -->
- <section id="contact" class="contact">
-    <h2>Contact Us</h2>
-    <p>Got questions? Chat with us on WhatsApp!</p>
-    <a href="https://wa.me/2348012345678?text=Hello%20I%20want%20to%20know%20more%20about%20the%20200lvl%20Linguistics%20Football%20Team" 
-       target="_blank" class="whatsapp-btn">
-        <img src="whatsapp.webp" alt="WhatsApp Icon"> Chat on WhatsApp
-    </a>
-</section>
-</main>
-
-<!-- FOOTER -->
-<footer>
-  <div class="container" style="display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap">
-    <div>
-      <strong>200lvl Linguistics Football Team</strong><br>
-      <small style="color:var(--muted)">Alumni & student club — passion first.</small>
-    </div>
-    <div style="color:var(--muted)">© <span id="year"></span> 200lvl Linguistics FC</div>
-  </div>
-</footer>
-
-<!-- PLAYER OVERLAY (hidden page) -->
-<div class="overlay" id="playerOverlay" role="dialog" aria-modal="true" aria-hidden="true">
-  <button class="close-btn" id="closeOverlay" aria-label="Close player panel">Close</button>
-  <div class="player-panel" id="playerPanel">
-    <div class="left">
-      <img id="panelPhoto" src="" alt="Player photo">
-      <h2 id="panelName">Player Name</h2>
-      <div id="panelRole" style="color:var(--muted);margin-bottom:8px">Position • No.</div>
-     
+    <!-- SmartEarn & CashBox mini cards -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="card">
+        <div style="font-size:12px;color:var(--muted)">SmartEarn</div>
+        <div style="font-weight:800;font-size:16px">20.80%<div style="font-size:11px;color:var(--muted);margin-top:3px">Annual Yield</div></div>
+        <button class="small-btn" style="margin-top:8px">Save</button>
+      </div>
+      <div class="card">
+        <div style="font-size:12px;color:var(--muted)">CashBox</div>
+        <div style="font-weight:800;font-size:16px">20.00%<div style="font-size:11px;color:var(--muted);margin-top:3px">Maximum Annual Yield</div></div>
+        <button class="small-btn" style="margin-top:8px">₦1 to Start</button>
       </div>
     </div>
 
-    <div class="right">
-      <h3 style="margin-top:0">Stats</h3>
-      <div class="stats" id="panelStats">
-        <!-- stat boxes -->
+    <!-- Premium Banner -->
+    <div class="card horizontal-banner">
+      <div class="banner-left">Premium Card<br><small style="font-weight:600;color:#444">As low as ₦499/card</small></div>
+      <button class="small-btn" style="background:#fff;color:#111;font-weight:700">Get Now</button>
+    </div>
+
+    <!-- Big promo -->
+    <div style="background:linear-gradient(90deg,#fff,#f3a4f6);border-radius:10px;padding:12px;color:#111;display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-weight:800">Your Benefit Is Here!</div>
+        <div style="font-size:16px;margin-top:5px">₦500K <span style="color:#6b7280;font-size:11px">Value</span></div>
       </div>
-
-      <h3 style="margin-top:18px">Bio</h3>
-      <p id="panelBio" style="color:var(--muted)">Short bio and notes about the player. Age, year, and specialities.</p>
-
-      <h3 style="margin-top:18px">Recent Performances</h3>
-      <ul id="panelMatches" style="color:var(--muted)"></ul>
+      <button class="small-btn" style="background:var(--accent);color:#111;font-weight:700">Claim Now</button>
     </div>
   </div>
-</div>
 
-<!-- Lightbox for gallery -->
-<div id="lightbox" style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.9);z-index:130">
-  <img id="lightboxImg" alt="Gallery image" style="max-width:94%;max-height:86%;border-radius:8px">
+  <!-- Recent Transactions -->
+  <div class="transactions">
+    <h3>Transaction History</h3>
+    <div class="bank-banner">
+      <img src="https://via.placeholder.com/300x60" alt="Bank Promotion Banner" id="bankImage">
+      <button class="banner-btn">Explore</button>
+    </div>
+    <div class="filter-row">
+      <select class="filter-select" id="categoryFilter">
+        <option value="all">All Categories</option>
+        <option value="interbank">Interbank Transfer</option>
+        <option value="send">Send</option>
+        <option value="withdraw">Withdraw</option>
+        <option value="auto">Auto Deduct-Flexi Repayment</option>
+        <option value="data">Buy Data Bundle</option>
+      </select>
+      <select class="filter-select" id="statusFilter">
+        <option value="all">All Status</option>
+        <option value="in">In</option>
+        <option value="out">Out</option>
+      </select>
+    </div>
+    <div class="balance-summary">
+      <span>In ₦8,530.00</span>
+      <span>Out ₦9,162.93</span>
+    </div>
+    <ul class="tx" id="txList"></ul>
+  </div>
+
+  <!-- Send Money Form (hidden by default) -->
+  <div class="form-card" id="sendForm">
+    <input type="text" id="bankName" placeholder="Bank Name" required>
+    <input type="text" id="bankAcct" placeholder="Bank Account Number" required>
+    <input type="text" id="accountName" placeholder="Account Name" required>
+    <input type="number" id="sendAmount" placeholder="₦ Amount" required>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="primary" id="submitTransfer" style="flex:1">Transfer</button>
+      <button type="button" class="small-btn ghost" id="cancelTransfer" style="flex:1">Cancel</button>
+    </div>
+    <div id="formStatus" class="status"></div>
+  </div>
+
+  <!-- Add Money Form (hidden by default) -->
+  <div class="form-card" id="addMoneyForm">
+    <input type="text" id="recipientInput" placeholder="Recipient Name (e.g., Top Up)" value="Top Up">
+    <input type="number" id="amountInput" placeholder="₦ Amount" required>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="primary" id="receiveBtn" style="flex:1">Add Money</button>
+      <button type="button" class="small-btn ghost" id="cancelAddMoney" style="flex:1">Cancel</button>
+    </div>
+    <div id="addMoneyStatus" class="status"></div>
+  </div>
+
+  <!-- Withdraw Form (hidden by default) -->
+  <div class="form-card" id="withdrawForm">
+    <input type="text" id="withdrawBankName" placeholder="Bank Name" required>
+    <input type="text" id="withdrawBankAcct" placeholder="Bank Account Number" required>
+    <input type="text" id="withdrawAccountName" placeholder="Account Name" required>
+    <input type="number" id="withdrawAmount" placeholder="₦ Amount" required>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="primary" id="submitWithdraw" style="flex:1">Withdraw</button>
+      <button type="button" class="small-btn ghost" id="cancelWithdraw" style="flex:1">Cancel</button>
+    </div>
+    <div id="withdrawStatus" class="status"></div>
+  </div>
+
+  <!-- Success Screen with Receipt -->
+  <div class="success-screen" id="successScreen">
+    <h3 style="margin:0 0 8px 0;">Transaction Successful</h3>
+    <div class="receipt" id="receiptDetails"></div>
+    <button type="button" class="small-btn" id="closeSuccess" style="margin-top:8px;width:100%;">Close</button>
+  </div>
+
+  <!-- Bottom nav -->
+  <nav class="bottom" role="navigation" aria-label="Main navigation">
+    <div class="bottom-inner">
+      <div class="nav-item active" role="button" aria-label="Home" tabindex="0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" d="M3 9l9-6 9 6v8a2 2 0 01-2 2h-4v-6H9v6H5a2 2 0 01-2-2z"/></svg>Home</div>
+      <div class="nav-item" role="button" aria-label="Loan" tabindex="0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path stroke="rgba(255,255,255,0.5)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" d="M5 8h14"/></svg>Loan</div>
+      <div class="nav-item" role="button" aria-label="Wealth" tabindex="0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path stroke="rgba(255,255,255,0.5)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" d="M20 12H4"/></svg>Wealth</div>
+      <div class="nav-item" role="button" aria-label="Reward" tabindex="0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path stroke="rgba(255,255,255,0.5)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" d="M12 5v14"/></svg>Reward</div>
+      <div class="nav-item" role="button" aria-label="Me" tabindex="0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path stroke="rgba(255,255,255,0.5)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" d="M12 12a5 5 0 100-10 5 5 0 000 10zM21 21v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2"/></svg>Me</div>
+    </div>
+  </nav>
+
+  <!-- Transaction modal -->
+  <div class="modal" id="historyModal">
+    <div class="sheet">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong>Transaction Details</strong>
+        <div>
+          <button type="button" class="close-x" id="closeHistory">Close</button>
+        </div>
+      </div>
+      <div class="tx-details" id="historyList"></div>
+      <div style="margin-top:10px;display:flex;gap:6px">
+        <button type="button" class="small-btn" id="clearAll">Clear All</button>
+        <button type="button" class="small-btn" id="exportJSON">Export JSON</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-/* ------------- Data ------------- */
+/* -------------------------
+   Demo banking logic (localStorage)
+   ------------------------- */
+const LS_BAL = 'demo_balance_ngn';
+const LS_TX = 'demo_transactions_ngn';
+const LS_PROFILE_PIC = 'demo_profile_pic';
 
-/* Players data (20 players). Each has: id, name, pos, number, bio, photo (assets/players/p{n}.jpg optional), stats */
-const players = [
-  {id:1,name:"Fabunmi Ayodeji Damilare.",pos:"Captain",number:10,photo:"img90.webp",bio:"3rd-year linguistics. Quick striker. Penalty specialist.",stats:{apps:0,goals:0,assists:0,yellow:0}},
-  {id:2,name:"Tiamiyu Abdulsalam Adedayo.",pos:"Keeper",number:1,photo:"TSA.jpeg",bio:"Playmaker and set-piece taker.",stats:{apps:0,goals:0,assists:0,yellow:0,cleanSheets:0,goalsConceded:0}},
-  {id:3,name:"⁠Adeyinka Paul Adeboye.",pos:"Keeper",number:12,photo:"paul.jpeg",bio:"Solid center-back, strong in the air.",stats:{apps:0,goals:0,assists:0,yellow:0,cleanSheets:0,goalsConceded:0}},
-  {id:4,name:"⁠Owolabi Olamilekan Remilekun.",pos:"Striker",number:9,photo:"lekan.jpeg",bio:"Reliable keeper. Excellent distribution.",stats:{apps:0,goals:0,assists:0}},
-  {id:5,name:"Adeyemi Elijah Mayowa.",pos:"Forward",number:11,photo:"assets/players/p5.jpg",bio:"Pacey winger with good crossing.",stats:{apps:0,goals:0,assists:0}},
-  {id:6,name:"Ajayi David Olamide.",pos:"Midfielder",number:6,photo:"assets/players/p6.jpg",bio:"Box-to-box midfielder.",stats:{apps:0,goals:0,assists:0}},
-  {id:7,name:"Dahunsi Ogooluwa Ebenezer.",pos:"Right Back",number:2,photo:"ogo.jpeg",bio:"Fullback who overlaps well.",stats:{apps:0,goals:0,assists:0}},
-  {id:8,name:"Oluwatunmise Samuel Ayomiposi.",pos:"Midfielder",number:10,photo:"assets/players/p8.jpg",bio:"Creative attacking mid.",stats:{apps:0,goals:0,assists:0}},
-  {id:9,name:"Olaniyi Joseph Olamilekan",pos:"Defender",number:3,photo:"ola.jpeg",bio:"Tactical defender.",stats:{apps:0,goals:0,assists:0}},
-  {id:10,name:"Afolabi Oluwatosin Oluwagbenga.",pos:"Forward",number:7,photo:"assets/players/p10.jpg",bio:"Powerful forward.",stats:{apps:0,goals:0,assists:0}},
-  {id:11,name:"Ayeni Oreoluwa Greatgrace.",pos:"Midfielder",number:14,photo:"assets/players/p11.jpg",bio:"Sets the tempo.",stats:{apps:0,goals:0,assists:0}},
-  {id:12,name:"Adeosebikan segun Abayomi.",pos:"Defender",number:3,photo:"assets/players/p12.jpg",bio:"Left back with pace.",stats:{apps:0,goals:0,assists:0}},
-  {id:13,name:"Ikuomola Daniel.",pos:"Forward",number:17,photo:"assets/players/p13.jpg",bio:"Super-sub with impact.",stats:{apps:0,goals:0,assists:0}},
-  {id:14,name:"Badru Oluwatumininu.",pos:"Midfielder",number:12,photo:"assets/players/p14.jpg",bio:"Strong ball-winner.",stats:{apps:0,goals:0,assists:0}},
-  {id:15,name:"Latef fawas morenikeji.",pos:"Goalkeeper",number:21,photo:"assets/players/p15.jpg",bio:"Backup keeper, solid shot-stopper.",stats:{apps:0,goals:0,assists:0,yellow:0}},
-  {id:16,name:"Megbowon Iwabiolorun.",pos:"Right Winger",number:7,photo:"cook.jpeg",bio:"Versatile center/left back.",stats:{apps:0,goals:0,assists:0}},
-  {id:17,name:"Iheanacho Daniel.",pos:"Defender",number:5,photo:"daniel.jpeg",bio:"Young prospect with flair.",stats:{apps:0,goals:0,assists:2}},
-  {id:18,name:"Godwin Samuel Erikefee.",pos:"Midfielder",number:16,photo:"alpha.jpeg",bio:"Energetic box-to-box.",stats:{apps:0,goals:0,assists:0}},
-  {id:19,name:"SALAU Abdulramon Tobiloba.",pos:"Defender",number:22,photo:"assets/players/p19.jpg",bio:"Strong tackler.",stats:{apps:0,goals:0,assists:0}},
-  {id:20,name:"Adedeji Adedolapo Daniel.",pos:"Midfielder",number:20,photo:"assets/players/p20.jpg",bio:"Accurate passer.",stats:{apps:0,goals:0,assists:0}}
-];
+/* default data */
+let balance = parseFloat(localStorage.getItem(LS_BAL) || '556489.00');
+let transactions = JSON.parse(localStorage.getItem(LS_TX) || JSON.stringify([
+  {id: genId(), name: "Interbank Transfer", amount: 290.00, time: new Date('2025-07-30T19:13:00').getTime()},
+  {id: genId(), name: "Send - ABDULSALAM ADEDAYO TIAMIYU", amount: -400.00, time: new Date('2025-07-30T18:38:00').getTime()},
+  {id: genId(), name: "Send - AYODEJI DAMILARE FABUNMI", amount: -1500.00, time: new Date('2025-07-30T12:33:00').getTime()},
+  {id: genId(), name: "Interbank Transfer", amount: 1990.00, time: new Date('2025-07-30T12:33:00').getTime()},
+  {id: genId(), name: "Auto deduct-Flexi Repayment", amount: -937.50, time: new Date('2025-07-28T10:04:00').getTime()},
+  {id: genId(), name: "Interbank Transfer", amount: 1000.00, time: new Date('2025-07-28T10:03:00').getTime()},
+  {id: genId(), name: "Auto deduct-Flexi Repayment", amount: -40.00, time: new Date('2025-07-16T14:41:00').getTime()},
+  {id: genId(), name: "Buy Data Bundle", amount: -480.00, time: new Date('2025-07-14T11:06:00').getTime()},
+  {id: genId(), name: "Send - TOOCHITECH-TIA", amount: -500.00, time: new Date('2025-07-13T19:29:00').getTime()},
+  {id: genId(), name: "Send - RONKE OMOLARA OYAFAJO", amount: -500.00, time: new Date('2025-07-13T17:38:00').getTime()}
+]));
 
-/* Upcoming games */
-const upcoming = [
-  {date:'',opponent:'Unknown',venue:'Home',time:'15:00'},
-  {date:'2025-08-17',opponent:'Unknown',venue:'Away',time:'16:00'},
-  {date:'2025-08-24',opponent:'Unknown',venue:'Home',time:'14:00'}
-];
+/* UI refs */
+const balanceDisplay = document.getElementById('balanceDisplay');
+const txList = document.getElementById('txList');
+const historyModal = document.getElementById('historyModal');
+const historyList = document.getElementById('historyList');
+const btnHistory = document.getElementById('btnHistory');
+const btnAddMoney = document.getElementById('btnAddMoney');
+const sendForm = document.getElementById('sendForm');
+const submitTransfer = document.getElementById('submitTransfer');
+const cancelTransfer = document.getElementById('cancelTransfer');
+const bankName = document.getElementById('bankName');
+const bankAcct = document.getElementById('bankAcct');
+const accountName = document.getElementById('accountName');
+const sendAmount = document.getElementById('sendAmount');
+const formStatus = document.getElementById('formStatus');
+const addMoneyForm = document.getElementById('addMoneyForm');
+const receiveBtn = document.getElementById('receiveBtn');
+const cancelAddMoney = document.getElementById('cancelAddMoney');
+const recipientInput = document.getElementById('recipientInput');
+const amountInput = document.getElementById('amountInput');
+const addMoneyStatus = document.getElementById('addMoneyStatus');
+const withdrawForm = document.getElementById('withdrawForm');
+const submitWithdraw = document.getElementById('submitWithdraw');
+const cancelWithdraw = document.getElementById('cancelWithdraw');
+const withdrawBankName = document.getElementById('withdrawBankName');
+const withdrawBankAcct = document.getElementById('withdrawBankAcct');
+const withdrawAccountName = document.getElementById('withdrawAccountName');
+const withdrawAmount = document.getElementById('withdrawAmount');
+const withdrawStatus = document.getElementById('withdrawStatus');
+const successScreen = document.getElementById('successScreen');
+const receiptDetails = document.getElementById('receiptDetails');
+const closeSuccess = document.getElementById('closeSuccess');
+const eyeToggle = document.getElementById('eyeToggle');
+const closeHistory = document.getElementById('closeHistory');
+const clearAll = document.getElementById('clearAll');
+const exportJSON = document.getElementById('exportJSON');
+const profilePic = document.getElementById('profilePic');
+const profileUpload = document.getElementById('profileUpload');
 
-/* Fixtures (extended) */
-const fixtures = [
-  {date:'TBD',comp:'Mayor Champions Cup',opponent:'Unknown',venue:'H',time:'15:00',score:'Not played'},
-  {date:'TBD',comp:'HOD Cup',opponent:'Unknown',venue:'A',time:'16:00',score:'Not played'},
-  {date:'TBD',comp:'League',opponent:'Unknown',venue:'H',time:'14:00',score:'Not played'},
-  {date:'TBD',comp:'League',opponent:'Unknown ',venue:'H',time:'15:00',score:'Not played'},
-  {date:'TBD',comp:'League',opponent:'Unknown',venue:'A',time:'16:00',score:'Not played'},
-];
-
-/* Gallery images (use assets/gallery/g1.jpg..g8.jpg) */
-const gallery = [
-  'gall1.jpeg','assets/gallery/g2.jpg','gall2.jpeg','assets/gallery/g4.jpg',
-  'assets/gallery/g5.jpg','assets/gallery/g6.jpg','assets/gallery/g7.jpg','assets/gallery/g8.jpg'
-];
-
-/* Updates */
-const updates = [
-  {date:'2025-07-25',title:'Training Camp Kicks Off',body:'Training camp starts next week. Squad to report to University Grounds.'},
-  {date:'2025-07-18',title:'New Kit Sponsor',body:'We are happy to welcome LinguaSports as our kit sponsor.'},
-  {date:'2025-06-30',title:'Season Recap',body:'An excellent first half of the season — see top moments in the gallery.'}
-];
-
-/* ------------- Helpers & Renderers ------------- */
-
-function mkPlayerCard(p){
-  const div = document.createElement('div');
-  div.className = 'player-card';
-  div.setAttribute('tabindex',0);
-  div.innerHTML = `
-    <div class="thumb">
-      <img src="${p.photo}" alt="${p.name}" onerror="this.src=playerPlaceholder('${p.name}')">
-    </div>
-    <h4>${p.name}</h4>
-    <p>${p.pos} • #${p.number}</p>
-  `;
-  div.addEventListener('click', ()=> openPlayer(p.id));
-  div.addEventListener('keypress', (e)=>{ if(e.key==='Enter') openPlayer(p.id) });
-  return div;
+// Load saved profile picture if exists
+const savedProfilePic = localStorage.getItem(LS_PROFILE_PIC);
+if (savedProfilePic) {
+  profilePic.src = savedProfilePic;
 }
 
-/* placeholder svg as data URL with initials */
-function playerPlaceholder(name){
-  const initials = name.split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase();
-  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600'><rect width='100%' height='100%' fill='%231a1a1d'/><text x='50%' y='52%' font-size='80' text-anchor='middle' fill='%23fff' font-family='Arial'>${initials}</text></svg>`;
-  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+let showBalance = true;
+let selectedTxId = null;
+
+/* helpers */
+function genId() { return 'tx_' + Math.random().toString(36).slice(2,11); }
+function saveState() { localStorage.setItem(LS_BAL, balance); localStorage.setItem(LS_TX, JSON.stringify(transactions)); }
+function formatNGN(n) { return '₦' + Number(n).toLocaleString('en-NG', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function timeAgo(ts) {
+  const s = Math.floor((Date.now() - ts) / 1000);
+  if (s < 60) return `${s}s ago`;
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  if (d < 30) return `${d}d ago`;
+  return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+}
+function formatInputWithCommas(input) {
+  let value = input.value.replace(/,/g, '');
+  if (value === '' || isNaN(value)) return;
+  input.value = Number(value).toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+function parseInputWithCommas(value) {
+  return parseFloat(value.replace(/,/g, '') || '0');
 }
 
-/* render players */
-function renderPlayers(){
-  const grid = document.getElementById('playersGrid');
-  grid.innerHTML = '';
-  players.forEach(p => grid.appendChild(mkPlayerCard(p)));
+/* renderers */
+function renderBalance() {
+  balanceDisplay.textContent = showBalance ? formatNGN(balance) : '₦**';
+  eyeToggle.classList.toggle('active', !showBalance);
 }
-
-/* render upcoming */
-function renderUpcoming(){
-  const el = document.getElementById('upcomingList');
-  el.innerHTML = '';
-  upcoming.forEach(g=>{
-    const d = new Date(g.date);
-    const row = document.createElement('div');
-    row.className = 'game';
-    row.innerHTML = `<div><strong>${g.opponent}</strong><div style="color:var(--muted)">${g.venue} • ${d.toLocaleDateString()} </div></div><div style="text-align:right"><div style="font-weight:700">${g.time}</div><div style="color:var(--muted)">${d.toLocaleDateString()}</div></div>`;
-    el.appendChild(row);
-  });
-}
-
-/* render fixtures */
-function renderFixtures(){
-  const tbody = document.querySelector('#fixturesTable tbody');
-  tbody.innerHTML = '';
-  fixtures.forEach(r=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${(new Date(r.date)).toLocaleDateString()}</td><td>${r.comp}</td><td>${r.opponent}</td><td>${r.venue}</td><td>${r.time}</td><td>${r.score ? r.score : 'TBD'}</td>`;
-    tbody.appendChild(tr);
-  });
-}
-
-/* render gallery */
-function renderGallery(){
-  const g = document.getElementById('galleryGrid');
-  g.innerHTML = '';
-  gallery.forEach(src=>{
-    const img = document.createElement('img');
-    img.src = src;
-    img.alt = 'Gallery';
-    img.onerror = function(){ this.style.background='#1b1b1d'; this.style.height='160px'; this.style.display='block'; this.style.borderRadius='8px'; this.src=''; this.insertAdjacentHTML('afterend',''); }
-    img.addEventListener('click', ()=> openLightbox(src));
-    g.appendChild(img);
-  });
-}
-
-/* render updates */
-function renderUpdates(){
-  const u = document.getElementById('updatesList');
-  u.innerHTML = '';
-  updates.forEach(it=>{
-    const el = document.createElement('div');
-    el.className = 'update';
-    el.innerHTML = `<strong>${it.title}</strong><div style="color:var(--muted);font-size:13px">${(new Date(it.date)).toLocaleDateString()}</div><p style="margin:8px 0 0">${it.body}</p>`;
-    u.appendChild(el);
-  });
-}
-
-/* player overlay functions */
-const overlay = document.getElementById('playerOverlay');
-const panelPhoto = document.getElementById('panelPhoto');
-const panelName = document.getElementById('panelName');
-const panelRole = document.getElementById('panelRole');
-const panelBio = document.getElementById('panelBio');
-const panelStats = document.getElementById('panelStats');
-const panelMatches = document.getElementById('panelMatches');
-
-function openPlayer(id){
-  const p = players.find(x=>x.id===id);
-  if(!p) return;
-  // populate
-  panelPhoto.src = p.photo; panelPhoto.onerror = function(){ this.src = playerPlaceholder(p.name) };
-  panelName.textContent = p.name;
-  panelRole.textContent = `${p.pos} • #${p.number}`;
-  panelBio.textContent = p.bio || '—';
-  panelStats.innerHTML = '';
-  // show stats as key/value
-  const s = p.stats || {};
-  Object.entries(s).forEach(([k,v]) => {
-    const stat = document.createElement('div');
-    stat.className = 'stat';
-    stat.innerHTML = `<div style="font-weight:700">${v}</div><div style="color:var(--muted);font-size:12px">${k.toUpperCase()}</div>`;
-    panelStats.appendChild(stat);
-  });
-  // sample recent matches
-  panelMatches.innerHTML = '';
-  const recent = [
-    `${p.name} vs Linguaphiles — 1 goal`,
-    `${p.name} vs Syntax Town — 2 assists`,
-    `${p.name} vs Phonetics FC — 1 yellow`
-  ];
-  recent.forEach(r=>{
-    const li = document.createElement('li'); li.style.marginBottom='6px'; li.style.color='var(--muted)';
-    li.textContent = r; panelMatches.appendChild(li);
+function renderRecent() {
+  txList.innerHTML = '';
+  const categoryFilter = document.getElementById('categoryFilter').value;
+  const statusFilter = document.getElementById('statusFilter').value;
+  const filteredTx = transactions.filter(tx => {
+    const category = tx.name.includes('Interbank') ? 'interbank' : 
+                     tx.name.includes('Send') ? 'send' : 
+                     tx.name.includes('Withdraw') ? 'withdraw' : 
+                     tx.name.includes('Auto') ? 'auto' : 
+                     tx.name.includes('Buy') ? 'data' : 'other';
+    const isIn = tx.amount >= 0;
+    const matchesCategory = categoryFilter === 'all' || category === categoryFilter;
+    const matchesStatus = statusFilter === 'all' || (statusFilter === 'in' && isIn) || (statusFilter === 'out' && !isIn);
+    return matchesCategory && matchesStatus;
   });
 
-  // show overlay
-  overlay.style.display = 'flex';
-  overlay.setAttribute('aria-hidden','false');
-  document.body.style.overflow = 'hidden';
-  // update hash for routing
-  history.pushState(null, '', '#player-' + p.id);
-}
-
-/* close overlay */
-document.getElementById('closeOverlay').addEventListener('click', closeOverlay);
-overlay.addEventListener('click', (e)=>{ if(e.target===overlay) closeOverlay(); });
-
-function closeOverlay(){
-  overlay.style.display = 'none';
-  overlay.setAttribute('aria-hidden','true');
-  document.body.style.overflow = '';
-  // remove player hash
-  if(location.hash && location.hash.startsWith('#player-')) history.pushState(null, '', '#players');
-}
-
-/* lightbox */
-function openLightbox(src){
-  const lb = document.getElementById('lightbox');
-  const img = document.getElementById('lightboxImg');
-  img.src = src; img.onerror = function(){ this.src=''; this.alt='Image not available'; }
-  lb.style.display = 'flex';
-  lb.addEventListener('click', ()=>{ lb.style.display='none'; });
-}
-
-/* header nav smooth scroll */
-function scrollToSection(id){
-  const el = document.getElementById(id);
-  if(!el) return;
-  el.scrollIntoView({behavior:'smooth',block:'start'});
-  history.pushState(null,'', '#'+id);
-}
-
-/* fake slider prev/next */
-function prevSlide(){ alert('Prev slide — demo'); }
-function nextSlide(){ alert('Next slide — demo'); }
-
-/* init */
-function init(){
-  renderPlayers();
-  renderUpcoming();
-  renderFixtures();
-  renderGallery();
-  renderUpdates();
-  document.getElementById('year').textContent = new Date().getFullYear();
-
-  // simple routing: if direct #player-{id} in URL open overlay
-  if(location.hash){
-    if(location.hash.startsWith('#player-')){
-      const id = parseInt(location.hash.split('-')[1],10);
-      setTimeout(()=>openPlayer(id), 400); // small delay so page loads before overlay
-    } else {
-      const target = document.querySelector(`[id="${location.hash.substring(1)}"]`);
-      if(target) setTimeout(()=>target.scrollIntoView({behavior:'smooth'}), 100);
-    }
+  if (filteredTx.length === 0) {
+    txList.innerHTML = '<li class="small-muted" style="padding:10px">No transactions found</li>';
+    return;
   }
 
-  // keyboard escape to close overlay/lightbox
-  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ closeOverlay(); document.getElementById('lightbox').style.display='none'; }});
+  filteredTx.forEach(tx => {
+    const li = document.createElement('li');
+    li.className = 'tx';
+    li.style.cursor = 'pointer';
+    const category = tx.name.includes('Interbank') ? 'interbank transfer' : 
+                     tx.name.includes('Send') ? tx.name : 
+                     tx.name.includes('Withdraw') ? 'Withdraw' : 
+                     tx.name.includes('Auto') ? 'Auto deduct-Flexi Repayment' : 
+                     tx.name.includes('Buy') ? 'Buy Data Bundle' : 'Other';
+    const iconColor = tx.name.includes('Interbank') ? '#3b82f6' : 
+                      tx.name.includes('Send') ? '#8b5cf6' : 
+                      tx.name.includes('Withdraw') ? '#f59e0b' : 
+                      tx.name.includes('Auto') ? '#f97316' : 
+                      tx.name.includes('Buy') ? '#10b981' : '#d1d5db';
+    const icon = tx.name.includes('Interbank') ? '⬇' : 
+                 tx.name.includes('Send') ? '⬆' : 
+                 tx.name.includes('Withdraw') ? '💸' : 
+                 tx.name.includes('Auto') ? '📝' : 
+                 tx.name.includes('Buy') ? '📶' : '❓';
+    li.innerHTML = `
+      <div class="tx-meta">
+        <div class="tx-icon" style="background:${iconColor}">${icon}</div>
+        <div>
+          <div class="tx-category">${category}</div>
+          <div class="tx-time">${new Date(tx.time).toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true })}</div>
+        </div>
+      </div>
+      <div class="tx-amount ${tx.amount >= 0 ? 'in' : 'out'}">${tx.amount >= 0 ? '+' : '-'}${formatNGN(Math.abs(tx.amount)).slice(1)}</div>
+    `;
+    li.addEventListener('click', () => {
+      selectedTxId = tx.id;
+      historyModal.style.display = 'flex';
+      renderHistory();
+    });
+    txList.appendChild(li);
+  });
+}
+function renderHistory() {
+  historyList.innerHTML = '';
+  if (transactions.length === 0) {
+    historyList.innerHTML = '<div class="small-muted" style="padding:10px">No transactions yet</div>';
+    return;
+  }
+
+  const selectedTx = transactions.find(tx => tx.id === selectedTxId) || transactions[0];
+  if (!selectedTx) {
+    historyList.innerHTML = '<div class="small-muted" style="padding:10px">No transaction selected</div>';
+    return;
+  }
+
+  const isIncoming = selectedTx.amount >= 0;
+  const category = selectedTx.name.includes('Interbank') ? 'Interbank Transfer' :
+                   selectedTx.name.includes('Send') ? 'Send Money' :
+                   selectedTx.name.includes('Withdraw') ? 'Withdrawal' :
+                   selectedTx.name.includes('Auto') ? 'Auto Deduct' :
+                   selectedTx.name.includes('Buy') ? 'Data Purchase' : 'Other';
+  historyList.innerHTML = `
+    <div style="padding:12px;background:linear-gradient(90deg,#fff,#eee);color:#111;border-radius:10px;margin-bottom:10px">
+      <div style="font-weight:700">${category} to ${selectedTx.name}</div>
+      <div style="font-size:24px;margin-top:5px">${formatNGN(Math.abs(selectedTx.amount))}</div>
+      <div style="color:#22c55e;font-size:11px;margin-top:3px">Successful</div>
+    </div>
+    <div class="tx-detail-row">
+      <div class="tx-detail-label">Transfer Amount</div>
+      <div class="tx-detail-value">${formatNGN(Math.abs(selectedTx.amount))}</div>
+    </div>
+    <div class="tx-detail-row">
+      <div class="tx-detail-label">Fee</div>
+      <div class="tx-detail-value">₦0.00</div>
+    </div>
+    <div class="tx-detail-row">
+      <div class="tx-detail-label">Payment Amount</div>
+      <div class="tx-detail-value">${formatNGN(Math.abs(selectedTx.amount))}</div>
+    </div>
+    <div class="tx-detail-row">
+      <div class="tx-detail-label">Recipient</div>
+      <div class="tx-detail-value">${selectedTx.name}</div>
+    </div>
+    <div class="tx-detail-row">
+      <div class="tx-detail-label">Session ID</div>
+      <div class="tx-detail-value">${genId().replace('tx_', 'sess_')}</div>
+    </div>
+    <div class="tx-detail-row" style="color:#7c3aed">
+      <div class="tx-detail-label">If the recipient account is not credited within 5 minutes, please use the Session ID to contact the recipient bank.</div>
+    </div>
+    <div class="tx-detail-row">
+      <div class="tx-detail-label">Completion Time</div>
+      <div class="tx-detail-value">${new Date(selectedTx.time).toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true })}</div>
+    </div>
+    <div class="tx-detail-row">
+      <div class="tx-detail-label">Transaction ID</div>
+      <div class="tx-detail-value">${selectedTx.id}</div>
+    </div>
+    <div class="tx-detail-row">
+      <div class="tx-detail-label">Application</div>
+      <div class="tx-detail-value">PalmPay</div>
+    </div>
+    <div class="tx-detail-row">
+      <div class="tx-detail-label">Payment Type</div>
+      <div class="tx-detail-value">${isIncoming ? 'Money Received' : 'Money Transfer'}</div>
+    </div>
+    <div class="tx-detail-row">
+      <div class="tx-detail-label">Payment Method</div>
+      <div class="tx-detail-value">Balance ${formatNGN(balance)}</div>
+    </div>
+    <div style="margin-top:10px">
+      <div style="color:var(--muted)">Any Questions about this transaction?</div>
+      <div class="tx-detail-row" style="background:#0b0b0c;padding:6px">
+        <span>Receiver didn't get the money</span>
+        <span style="color:#7c3aed">></span>
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;margin-top:10px">
+      <button type="button" class="small-btn" style="flex:1">View Receipt</button>
+      <button type="button" class="small-btn" style="flex:1">Report a Dispute</button>
+    </div>
+  `;
 }
 
-init();
+/* actions */
+function toggleEye() {
+  showBalance = !showBalance;
+  renderBalance();
+}
+eyeToggle.addEventListener('click', toggleEye);
+btnHistory.addEventListener('click', () => {
+  selectedTxId = transactions[0]?.id;
+  historyModal.style.display = 'flex';
+  renderHistory();
+});
+closeHistory.addEventListener('click', () => { historyModal.style.display = 'none'; });
+btnAddMoney.addEventListener('click', () => { openAddMoneyQuick(); });
+btnClaim.addEventListener('click', () => {
+  showStatus('PalmPoints claimed! 🎉', true, formStatus);
+  setTimeout(() => { closeStatus(); }, 2000);
+});
+clearAll.addEventListener('click', () => {
+  if (!confirm('Clear all demo transactions?')) return;
+  transactions = [];
+  balance = 556489.00;
+  saveState();
+  renderAll();
+  showStatus('Cleared', true, formStatus);
+});
+exportJSON.addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify({balance, transactions}, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'demo-account.json';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+function openAddMoneyQuick() {
+  addMoneyForm.classList.add('active');
+  recipientInput.value = 'Top Up';
+  amountInput.value = '';
+  amountInput.focus();
+  showStatus('Enter amount and press "Add Money"', true, addMoneyStatus);
+}
+
+/* Format input with commas */
+[sendAmount, amountInput, withdrawAmount].forEach(input => {
+  input.addEventListener('input', () => formatInputWithCommas(input));
+});
+
+/* send / add money / withdraw logic */
+document.getElementById('toBank').addEventListener('click', () => {
+  sendForm.classList.add('active');
+  bankName.value = '';
+  bankAcct.value = '';
+  accountName.value = '';
+  sendAmount.value = '';
+  formStatus.textContent = '';
+});
+
+document.getElementById('withdraw').addEventListener('click', () => {
+  withdrawForm.classList.add('active');
+  withdrawBankName.value = '';
+  withdrawBankAcct.value = '';
+  withdrawAccountName.value = '';
+  withdrawAmount.value = '';
+  withdrawStatus.textContent = '';
+});
+
+submitTransfer.addEventListener('click', async () => {
+  const bName = bankName.value.trim();
+  const bAcct = bankAcct.value.trim();
+  const aName = accountName.value.trim();
+  const amount = parseInputWithCommas(sendAmount.value);
+
+  if (!bName || !bAcct || !aName || !amount || amount <= 0) {
+    showStatus('Please fill all fields with valid details', false, formStatus);
+    return;
+  }
+  if (amount > balance) {
+    showStatus('Insufficient balance', false, formStatus);
+    return;
+  }
+  if (!/^\d{10}$/.test(bAcct)) {
+    showStatus('Bank account number must be 10 digits', false, formStatus);
+    return;
+  }
+
+  submitTransfer.classList.add('loading');
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
+  balance = +(balance - amount).toFixed(2);
+  const tx = { id: genId(), name: `Interbank to ${aName} (${bName})`, amount: -amount, time: Date.now() };
+  transactions.unshift(tx);
+  saveState();
+  renderAll();
+
+  receiptDetails.innerHTML = `
+    <h4 style="margin:0 0 6px 0;">Receipt</h4>
+    <div class="tx-detail-row"><div class="tx-detail-label">Bank Name</div><div class="tx-detail-value">${bName}</div></div>
+    <div class="tx-detail-row"><div class="tx-detail-label">Account Number</div><div class="tx-detail-value">${bAcct}</div></div>
+    <div class="tx-detail-row"><div class="tx-detail-label">Account Name</div><div class="tx-detail-value">${aName}</div></div>
+    <div class="tx-detail-row"><div class="tx-detail-label">Amount</div><div class="tx-detail-value">${formatNGN(amount)}</div></div>
+    <div class="tx-detail-row"><div class="tx-detail-label">Date</div><div class="tx-detail-value">${new Date().toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true })}</div></div>
+    <div class="tx-detail-row"><div class="tx-detail-label">Transaction ID</div><div class="tx-detail-value">${tx.id}</div></div>
+  `;
+  sendForm.classList.remove('active');
+  submitTransfer.classList.remove('loading');
+  successScreen.classList.add('active');
+});
+
+cancelTransfer.addEventListener('click', () => {
+  sendForm.classList.remove('active');
+  bankName.value = '';
+  bankAcct.value = '';
+  accountName.value = '';
+  sendAmount.value = '';
+  formStatus.textContent = '';
+});
+
+receiveBtn.addEventListener('click', async () => {
+  const name = recipientInput.value.trim() || 'Top Up';
+  const amount = parseInputWithCommas(amountInput.value);
+  if (!amount || amount <= 0) {
+    showStatus('Enter valid amount', false, addMoneyStatus);
+    return;
+  }
+
+  receiveBtn.classList.add('loading');
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
+  balance = +(balance + amount).toFixed(2);
+  const tx = { id: genId(), name: `${name} (Add Money)`, amount: +amount, time: Date.now() };
+  transactions.unshift(tx);
+  saveState();
+  renderAll();
+  showStatus(`Money added: Received ${formatNGN(amount)} from ${name}`, true, addMoneyStatus);
+  addMoneyForm.classList.remove('active');
+  receiveBtn.classList.remove('loading');
+  successScreen.classList.add('active');
+});
+
+cancelAddMoney.addEventListener('click', () => {
+  addMoneyForm.classList.remove('active');
+  recipientInput.value = '';
+  amountInput.value = '';
+  addMoneyStatus.textContent = '';
+});
+
+submitWithdraw.addEventListener('click', async () => {
+  const bName = withdrawBankName.value.trim();
+  const bAcct = withdrawBankAcct.value.trim();
+  const aName = withdrawAccountName.value.trim();
+  const amount = parseInputWithCommas(withdrawAmount.value);
+
+  if (!bName || !bAcct || !aName || !amount || amount <= 0) {
+    showStatus('Please fill all fields with valid details', false, withdrawStatus);
+    return;
+  }
+  if (amount > balance) {
+    showStatus('Insufficient balance', false, withdrawStatus);
+    return;
+  }
+  if (!/^\d{10}$/.test(bAcct)) {
+    showStatus('Bank account number must be 10 digits', false, withdrawStatus);
+    return;
+  }
+
+  submitWithdraw.classList.add('loading');
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
+  balance = +(balance - amount).toFixed(2);
+  const tx = { id: genId(), name: `Withdraw to ${aName} (${bName})`, amount: -amount, time: Date.now() };
+  transactions.unshift(tx);
+  saveState();
+  renderAll();
+
+  receiptDetails.innerHTML = `
+    <h4 style="margin:0 0 6px 0;">Withdrawal Receipt</h4>
+    <div class="tx-detail-row"><div class="tx-detail-label">Bank Name</div><div class="tx-detail-value">${bName}</div></div>
+    <div class="tx-detail-row"><div class="tx-detail-label">Account Number</div><div class="tx-detail-value">${bAcct}</div></div>
+    <div class="tx-detail-row"><div class="tx-detail-label">Account Name</div><div class="tx-detail-value">${aName}</div></div>
+    <div class="tx-detail-row"><div class="tx-detail-label">Amount</div><div class="tx-detail-value">${formatNGN(amount)}</div></div>
+    <div class="tx-detail-row"><div class="tx-detail-label">Date</div><div class="tx-detail-value">${new Date().toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true })}</div></div>
+    <div class="tx-detail-row"><div class="tx-detail-label">Transaction ID</div><div class="tx-detail-value">${tx.id}</div></div>
+  `;
+  withdrawForm.classList.remove('active');
+  submitWithdraw.classList.remove('loading');
+  successScreen.classList.add('active');
+});
+
+cancelWithdraw.addEventListener('click', () => {
+  withdrawForm.classList.remove('active');
+  withdrawBankName.value = '';
+  withdrawBankAcct.value = '';
+  withdrawAccountName.value = '';
+  withdrawAmount.value = '';
+  withdrawStatus.textContent = '';
+});
+
+closeSuccess.addEventListener('click', () => {
+  successScreen.classList.remove('active');
+  showStatus('Transaction completed successfully', true, formStatus);
+});
+
+/* Profile picture upload */
+function handleProfileUpload(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      profilePic.src = e.target.result;
+      localStorage.setItem(LS_PROFILE_PIC, e.target.result);
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+/* small status */
+let statusTimer = null;
+function showStatus(msg, ok, statusElement = formStatus) {
+  statusElement.textContent = msg;
+  statusElement.style.color = ok ? '#22c55e' : '#ff4d4f';
+  if (statusTimer) clearTimeout(statusTimer);
+  statusTimer = setTimeout(() => { statusElement.textContent = ''; }, 3500);
+}
+function closeStatus() { 
+  formStatus.textContent = ''; 
+  addMoneyStatus.textContent = ''; 
+  withdrawStatus.textContent = ''; 
+}
+
+/* render all */
+function renderAll() { renderBalance(); renderRecent(); renderHistory(); }
+
+/* init */
+renderAll();
+document.getElementById('categoryFilter').addEventListener('change', renderRecent);
+document.getElementById('statusFilter').addEventListener('change', renderRecent);
+
+/* click outside to close */
+[historyModal, sendForm, addMoneyForm, withdrawForm].forEach(el => {
+  el.addEventListener('click', (e) => {
+    if (e.target === el) el.classList.remove('active') || (el.style.display = 'none');
+  });
+});
+
+/* keyboard navigation for nav items */
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      item.click();
+    }
+  });
+});
+
+/* export sample */
+(function attachDemoClicks() {
+  document.querySelectorAll('.action').forEach(el => {
+    if (el.id !== 'toBank' && el.id !== 'withdraw') {
+      el.addEventListener('click', () => { showStatus('Feature demo: ' + el.textContent.trim(), true, formStatus); });
+    }
+  });
+})();
 </script>
-</body>
 </html>
